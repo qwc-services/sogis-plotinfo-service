@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+  <script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+
+<style type="text/css">
+<!--
+  .plot_info {
+    color: #595959;
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+    font-size: small;
+  }
+
+  .plot_info h3 {
+    font-weight: 700;
+    font-size: small;
+  }
+
+  .plot_info table {
+    width: 100%;
+    color: #595959;
+    font-size: small;
+  }
+
+  .plot_info table th {
+    text-align: left;
+  }
+
+  .plot_info table th.right-align, .plot_info table td.right-align {
+    text-align: right;
+  }
+
+  .plot_info .legend {
+     border: 1px solid black;
+     width: 30px;
+     height: 15px;
+  }
+
+  .plot_info svg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .chart .ct-label {
+    fill: #595959;
+    font-size: smaller;
+  }
+  .chart .ct-slice-pie {
+    stroke: black;
+  }
+
+{% for type, color in lcsfc_colors.items() %}
+  .lcsfc-{{ type }} .ct-slice-pie {
+    fill: {{ color }};
+  }
+{% endfor %}
+
+  .plot_info .flurnamen {
+    line-height: 1.5em;
+    max-height: 6em;
+    overflow: auto;
+  }
+
+  .plot_info .adressen {
+    max-height: 8em;
+    overflow: auto;
+  }
+-->
+</style>
+</head>
+
+<body>
+
+<div class="plot_info">
+  <div>
+    <h3>Bodenbedeckungsanteile</h3>
+
+    <table>
+      <thead>
+        <th>Typ</th>
+        <th></th>
+        <th class="right-align">Anteil</th>
+        <th class="right-align">Anteil in %</th>
+      </thead>
+      <tbody>
+        {% for landcover in info['landcover'] %}
+        <tr>
+          <td>{{ landcover['type'] }}</td>
+          <td><div class="legend" style="background-color: {{ landcover['color'] }};">&nbsp;</div></td>
+          <td class="right-align">{{ format_number( landcover['area'] | round | int ) }} m<sup>2</sup></td>
+          <td class="right-align">{{ landcover['area_percent'] | round(1) }} %</td>
+        </tr>
+        {% endfor %}
+        {% if info['rounding_difference'] > 0 %}
+        <tr>
+          <td colspan="2">Rundungsdifferenz</td>
+          <td class="right-align">{{ info['rounding_difference'] }} m<sup>2</sup></td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+
+    <div class="chart"></div>
+  </div>
+
+  <div>
+    <h3>Flurnamen</h3>
+
+    <div class="flurnamen">
+      {{ info['flurnamen'] }}
+    </div>
+  </div>
+
+{% if info['addresses'] %}
+  <div>
+    <h3>Gebäudeadressen</h3>
+
+    <div class="adressen">
+      <table>
+        <thead>
+          <th>Strasse</th>
+          <th>PLZ</th>
+          <th>Ortschaft</th>
+        </thead>
+        <tbody>
+          {% for address in info['addresses'] %}
+          <tr>
+            <td>{{ address['street'] }} {{ address['number'] if address['number'] }}</td>
+            <td>{{ address['zip'] }}</td>
+            <td>{{ address['city'] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endif %}
+
+{% if info['sdr'] %}
+  <div>
+    <h3>Selbstständige und dauernde Rechte</h3>
+
+    <table>
+      <thead>
+        <th>Nummer</th>
+        <th>Art</th>
+        <th class="right-align">Teilfläche</th>
+      </thead>
+      <tbody>
+        {% for sdr in info['sdr'] %}
+        <tr>
+          <td>{{ sdr['number'] }}</td>
+          <td>{{ sdr['type'] }}</td>
+          <td class="right-align">{{ format_number( sdr['area'] | round | int ) }} m<sup>2</sup></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
+  <div>
+    <h3>Grundbuchamt</h3>
+
+    {{ info['grundbuchamt'] | replace('\n', '<br/>') | safe }}
+  </div>
+
+  <div>
+    <h3>Nachführungsgeometer</h3>
+
+    {{ info['nfgeometer'] | replace('\n', '<br/>') | safe }}
+  </div>
+</div>
+
+<script type="text/javascript">
+  var data = {{ pie_chart | safe }};
+  new Chartist.Pie(
+    '.chart',
+    data,
+    {
+      height: 150,
+      chartPadding: 25,
+      labelPosition: 'outside',
+      labelOffset: 8,
+      labelDirection: 'explode',
+      labelInterpolationFnc: function(value, idx) {
+        return data.series[idx].value > 4 ? value : null;
+      }
+    }
+  );
+</script>
+
+</body>
+</html>

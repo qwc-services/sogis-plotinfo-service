@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://www.google.com/recaptcha/api.js?render={{ site_key }}"></script>
+  <script type="text/javascript">
+    grecaptcha.ready(function() {
+      grecaptcha.execute('{{ site_key }}', {action: 'plotOwnerInfo'}).then(function(token) {
+        {# call PlotOwnerInfo callback #}
+        window.top.plotOwnerInfo.loadOwnerInfo('{{ egrid }}', token);
+      });
+    });
+  </script>
+  <style type="text/css">
+  <!--
+    body {
+      margin: 0;
+    }
+
+    .plot-owner-loading {
+      padding: 0.25em;
+      font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+      font-size: 14px;
+      font-style: italic;
+      color: gray;
+      display: flex;
+      align-items: center;
+    }
+
+    {# spinner from QWC2 Spinner.jsx #}
+    .spinner {
+      display: inline-block;
+      position: relative;
+      flex: 0 0 1.5em;
+      height: 1.5em;
+      width: 1.5em;
+      margin-right: 0.5em;
+    }
+
+    .spinner > div {
+      -webkit-animation: spinner_anim 1.2s linear infinite;
+      -moz-animation: spinner_anim 1.2s linear infinite;
+      animation: spinner_anim 1.2s linear infinite;
+      border-radius: 5px;
+      background-color: black;
+      position: absolute;
+      width: 20%;
+      height: 7.8%;
+      top: 46.1%;
+      left: 40%;
+    }
+
+    @keyframes spinner_anim {
+     0% { opacity: 1; }
+     100% { opacity: 0.15; }
+    }
+
+    @-moz-keyframes spinner_anim {
+     0% { opacity: 1; }
+     100% { opacity: 0.15; }
+    }
+
+    @-webkit-keyframes spinner_anim {
+     0% { opacity: 1; }
+     100% { opacity: 0.15; }
+    }
+  -->
+  </style>
+</head>
+<body>
+  <div class="plot-owner-loading">
+    <div class="spinner">
+      <div style="animation-delay: -1.2s; transform: rotate(0deg) translate(146%);"></div>
+      <div style="animation-delay: -1.1s; transform: rotate(30deg) translate(146%);"></div>
+      <div style="animation-delay: -1s; transform: rotate(60deg) translate(146%);"></div>
+      <div style="animation-delay: -0.9s; transform: rotate(90deg) translate(146%);"></div>
+      <div style="animation-delay: -0.8s; transform: rotate(120deg) translate(146%);"></div>
+      <div style="animation-delay: -0.7s; transform: rotate(150deg) translate(146%);"></div>
+      <div style="animation-delay: -0.6s; transform: rotate(180deg) translate(146%);"></div>
+      <div style="animation-delay: -0.5s; transform: rotate(210deg) translate(146%);"></div>
+      <div style="animation-delay: -0.4s; transform: rotate(240deg) translate(146%);"></div>
+      <div style="animation-delay: -0.3s; transform: rotate(270deg) translate(146%);"></div>
+      <div style="animation-delay: -0.2s; transform: rotate(300deg) translate(146%);"></div>
+      <div style="animation-delay: -0.1s; transform: rotate(330deg) translate(146%);"></div>
+    </div>
+    <div>Daten werden geladen...</div>
+  </div>
+</body>
+</html>
