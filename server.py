@@ -8,18 +8,14 @@ from oereb_info import OerebInfo
 from plot_info import PlotInfo
 from plot_owner import PlotOwner
 
-# add parent dir to path, so shared modules can be imported
-path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../'))
-sys.path.insert(1, path)
-
-from service_lib.api import Api, CaseInsensitiveArgument  # noqa: E402
-from service_lib.app import app_nocache  # noqa: E402
-from service_lib.database import DatabaseEngine  # noqa: E402
+from qwc_services_core.api import Api, CaseInsensitiveArgument
+# from qwc_services_core.app import app_nocache
+from qwc_services_core.database import DatabaseEngine
 
 
 # Flask application
 app = Flask(__name__)
-app_nocache(app)
+# app_nocache(app)
 api = Api(app, version='1.0', title='PlotInfo service API',
           description="""API for SO!MAP PlotInfo service.
 

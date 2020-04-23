@@ -314,8 +314,8 @@ Captcha verification for plot owner info is enabled if `RECAPTCHA_SITE_KEY` is s
 See [reCAPTCHA documentation](https://developers.google.com/recaptcha/docs/v3). Register keys [here](https://g.co/recaptcha/v3).
 
 
-Usage/Development
------------------
+Usage
+-----
 
 Start PlotInfo service:
 
@@ -356,3 +356,19 @@ Get HTML with embedded captcha for plot owner info request (called from QWC2 Plo
 Plot owner info with captcha verification (called from QWC2 PlotOwnerInfo):
 
     http://localhost:5022/plot_owner/CH870679603216?token=<captcha_token>
+
+
+Development
+-----------
+
+Create a virtual environment:
+
+    virtualenv --python=/usr/bin/python3 .venv
+
+Activate virtual environment:
+
+    source .venv/bin/activate
+
+Install requirements:
+
+    pip install -r requirements.txt
