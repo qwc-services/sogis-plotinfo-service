@@ -9,13 +9,13 @@ from plot_info import PlotInfo
 from plot_owner import PlotOwner
 
 from qwc_services_core.api import Api, CaseInsensitiveArgument
-# from qwc_services_core.app import app_nocache
+from qwc_services_core.app import app_nocache
 from qwc_services_core.database import DatabaseEngine
 
 
 # Flask application
 app = Flask(__name__)
-# app_nocache(app)
+app_nocache(app)
 api = Api(app, version='1.0', title='PlotInfo service API',
           description="""API for SO!MAP PlotInfo service.
 
