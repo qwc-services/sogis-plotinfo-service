@@ -1,7 +1,7 @@
 import os
 import sys
 
-from flask import Flask
+from flask import Flask, jsonify
 from flask_restplus import reqparse, Resource
 
 from oereb_info import OerebInfo
@@ -145,6 +145,18 @@ class PlotOwner(Resource):
         """
         args = plot_owner_parser.parse_args()
         return plot_owner.info(egrid, args['token'])
+
+
+""" readyness probe endpoint """
+@app.route("/ready", methods=['GET'])
+def ready():
+    return jsonify({"status": "OK"})
+
+
+""" liveness probe endpoint """
+@app.route("/healthz", methods=['GET'])
+def healthz():
+    return jsonify({"status": "OK"})
 
 
 # local webserver
