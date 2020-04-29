@@ -2,6 +2,7 @@ import os
 
 from flask import make_response, Response, stream_with_context
 import requests
+from qwc_services_core.tenant_handler import TenantHandler
 
 
 class OerebInfo:
@@ -13,17 +14,23 @@ class OerebInfo:
     to generate PDFs from these XMLs.
     """
 
-    def __init__(self, logger):
+    def __init__(self, config_handler, logger):
         """Constructor
 
         :param Logger logger: Application logger
         """
+        self.config_handler = config_handler
         self.logger = logger
 
+    def load_config(self):
+        tenant_handler = TenantHandler(self.logger)
+        tenant = tenant_handler.tenant()
+        config = self.config_handler.tenant_config(tenant)
+
         # ÖREB-Webservice config
-        self.oereb_json_url = os.getenv('OEREB_JSON_URL')
-        self.oereb_xml_url = os.getenv('OEREB_XML_URL')
-        self.oereb_pdf_url = os.getenv('OEREB_PDF_URL')
+        self.oereb_json_url = config.get('oereb_json_url')
+        self.oereb_xml_url = config.get('oereb_xml_url')
+        self.oereb_pdf_url = config.get('oereb_pdf_url')
         if self.oereb_json_url is None:
             raise Exception("Environment variable OEREB_JSON_URL is not set")
         if self.oereb_xml_url is None:
@@ -36,6 +43,7 @@ class OerebInfo:
 
         :param str egrid: EGRID
         """
+        self.load_config()
         egrid = os.getenv('__OEREB_TEST_EGRID', egrid)
         try:
             # forward to ÖREB XML service
@@ -61,6 +69,7 @@ class OerebInfo:
 
         :param str egrid: EGRID
         """
+        self.load_config()
         egrid = os.getenv('__OEREB_TEST_EGRID', egrid)
         try:
             # forward to ÖREB JSON service
@@ -88,6 +97,7 @@ class OerebInfo:
 
         :param str egrid: EGRID
         """
+        self.load_config()
         egrid = os.getenv('__OEREB_TEST_EGRID', egrid)
         try:
             # forward to ÖREB PDF service

@@ -1,9 +1,9 @@
 from datetime import datetime
-import os
 from xml.dom.minidom import parseString
 
 from flask import json, render_template, Response
 import requests
+from qwc_services_core.tenant_handler import TenantHandler
 
 
 class PlotOwner:
@@ -38,26 +38,32 @@ class PlotOwner:
         </soapenv:Envelope>
     """
 
-    def __init__(self, db_engine, logger):
+    def __init__(self, config_handler, db_engine, logger):
         """Constructor
 
         :param DatabaseEngine db_engine: Database engine with DB connections
         :param Logger logger: Application logger
         """
-        self.db = db_engine.geo_db()
+        self.config_handler = config_handler
+        self.db_engine = db_engine
         self.logger = logger
 
-        self.gbdbs_service_url = os.getenv('GBDBS_SERVICE_URL')
-        self.hide_owner_addresses = os.getenv(
-            'HIDE_OWNER_ADRESSES', 'False') == 'True'
-        self.site_key = os.getenv('RECAPTCHA_SITE_KEY', '')
-        self.secret_key = os.getenv('RECAPTCHA_SECRET_KEY', '')
+    def load_config(self):
+        tenant_handler = TenantHandler(self.logger)
+        tenant = tenant_handler.tenant()
+        config = self.config_handler.tenant_config(tenant)
+
+        self.gbdbs_service_url = config.get('gbdbs_service_url')
+        self.hide_owner_addresses = config.get('hide_owner_addresses', False)
+        self.site_key = config.get('site_key', '')
+        self.secret_key = config.get('secret_key', '')
 
     def captcha(self, egrid):
         """Return HTML with embedded captcha for plot owner info request.
 
         :param str egrid: EGRID
         """
+        self.load_config()
         return Response(
             render_template(
                 'plot_owner_captcha.html', egrid=egrid, site_key=self.site_key
@@ -114,6 +120,7 @@ class PlotOwner:
         :param str egrid: EGRID
         :param str captcha_token: Captcha response token for verification
         """
+        self.load_config()
         try:
             if not self.verify_captcha(captcha_token):
                 return {

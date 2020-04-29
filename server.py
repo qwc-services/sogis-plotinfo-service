@@ -11,6 +11,7 @@ from plot_owner import PlotOwner
 from qwc_services_core.api import Api, CaseInsensitiveArgument
 from qwc_services_core.app import app_nocache
 from qwc_services_core.database import DatabaseEngine
+from qwc_services_core.runtime_config import RuntimeConfig
 
 
 # Flask application
@@ -33,15 +34,15 @@ app.config.SWAGGER_UI_DOC_EXPANSION = 'list'
 # disable verbose 404 error message
 app.config['ERROR_404_HELP'] = False
 
-# create DB engine
+config_handler = RuntimeConfig("plotinfo", app.logger)
 db_engine = DatabaseEngine()
 
 # create plot info
-plot_info = PlotInfo(db_engine, app.logger)
+plot_info = PlotInfo(config_handler, db_engine, app.logger)
 # create ÖREB info
-oereb_info = OerebInfo(app.logger)
+oereb_info = OerebInfo(config_handler, app.logger)
 # create plot owner info
-plot_owner = PlotOwner(db_engine, app.logger)
+plot_owner = PlotOwner(config_handler, db_engine, app.logger)
 
 # request parser
 pos_parser = reqparse.RequestParser(argument_class=CaseInsensitiveArgument)

@@ -1,7 +1,6 @@
-import os
-
 from flask import json, render_template, Response
 from sqlalchemy.sql import text as sql_text
+from qwc_services_core.tenant_handler import TenantHandler
 
 
 class PlotInfo:
@@ -229,35 +228,34 @@ class PlotInfo:
         'uebriger_Abbau': '#ffffff'
     }
 
-    def __init__(self, db_engine, logger):
+    def __init__(self, config_handler, db_engine, logger):
         """Constructor
 
         :param DatabaseEngine db_engine: Database engine with DB connections
         :param Logger logger: Application logger
         """
-        self.db = db_engine.geo_db()
+        self.config_handler = config_handler
+        self.db_engine = db_engine
         self.logger = logger
 
+    def load_config(self):
+        tenant_handler = TenantHandler(self.logger)
+        tenant = tenant_handler.tenant()
+        config = self.config_handler.tenant_config(tenant)
+
+        db_url = config.get('db_url', 'postgresql:///?service=sogis_services')
+        self.db = self.db_engine.db_engine(db_url)
+
         # BASIC_INFO_SQL
-        self.basic_info_sql = os.getenv(
-            'BASIC_INFO_SQL', self.DEFAULT_BASIC_INFO_SQL
-        )
-        self.basic_info_by_egrid_sql = os.getenv(
-            'BASIC_INFO_BY_EGRID_SQL', self.DEFAULT_BASIC_INFO_BY_EGRID_SQL
+        self.basic_info_sql = config.get(
+            'basic_info_sql', self.DEFAULT_BASIC_INFO_SQL)
+        self.basic_info_by_egrid_sql = config.get(
+            'basic_info_by_egrid_sql', self.DEFAULT_BASIC_INFO_BY_EGRID_SQL
         )
 
         # BASIC_INFO_FIELDS
-        BASIC_INFO_FIELDS = os.getenv('BASIC_INFO_FIELDS', None)
-        try:
-            basic_info_fields = json.loads(BASIC_INFO_FIELDS)
-        except Exception as e:
-            if BASIC_INFO_FIELDS:
-                self.logger.error(
-                    "Could not parse environment variable BASIC_INFO_FIELDS:\n%s"
-                    % e
-                )
-            basic_info_fields = self.DEFAULT_BASIC_INFO_FIELDS
-
+        basic_info_fields = config.get(
+            'basic_info_fields', self.DEFAULT_BASIC_INFO_FIELDS)
         self.basic_info_fields = []
         for field in basic_info_fields:
             try:
@@ -270,48 +268,40 @@ class PlotInfo:
                 )
 
         # FLURNAMEN_SQL
-        self.flurnamen_sql = os.getenv(
-            'FLURNAMEN_SQL', self.DEFAULT_FLURNAMEN_SQL
+        self.flurnamen_sql = config.get(
+            'flurnamen_sql', self.DEFAULT_FLURNAMEN_SQL
         )
 
         # DETAILED_INFO_SQL
-        self.detailed_info_sql = os.getenv(
-            'DETAILED_INFO_SQL', self.DEFAULT_DETAILED_INFO_SQL
+        self.detailed_info_sql = config.get(
+            'detailed_info_sql', self.DEFAULT_DETAILED_INFO_SQL
         )
 
         # LAND_COVER_FRACTIONS_SQL
-        self.land_cover_fractions_sql = os.getenv(
-            'LAND_COVER_FRACTIONS_SQL', self.DEFAULT_LAND_COVER_FRACTIONS_SQL
+        self.land_cover_fractions_sql = config.get(
+            'land_cover_fractions_sql', self.DEFAULT_LAND_COVER_FRACTIONS_SQL
         )
 
         # BUILDING_ADDRESSES_SQL
-        self.building_addresses_sql = os.getenv(
-            'BUILDING_ADDRESSES_SQL', self.DEFAULT_BUILDING_ADDRESSES_SQL
+        self.building_addresses_sql = config.get(
+            'building_addresses_sql', self.DEFAULT_BUILDING_ADDRESSES_SQL
         )
 
         # SDR_INFOS_LIEGENSCHAFT_SQL
-        self.sdr_infos_liegenschaft_sql = os.getenv(
-            'SDR_INFOS_LIEGENSCHAFT_SQL',
+        self.sdr_infos_liegenschaft_sql = config.get(
+            'sdr_infos_liegenschaft_sql',
             self.DEFAULT_SDR_INFOS_LIEGENSCHAFT_SQL
         )
 
         # SDR_INFOS_SDR_SQL
-        self.sdr_infos_sdr_sql = os.getenv(
-            'SDR_INFOS_SDR_SQL', self.DEFAULT_SDR_INFOS_SDR_SQL
+        self.sdr_infos_sdr_sql = config.get(
+            'sdr_infos_sdr_sql', self.DEFAULT_SDR_INFOS_SDR_SQL
         )
 
         # LCSFC_COLORS
-        self.lcsfc = self.DEFAULT_LCSFC_COLORS
-        if os.getenv('LCSFC_COLORS', None):
-            try:
-                self.lcsfc = json.loads(
-                    os.getenv('LCSFC_COLORS', None)
-                )
-            except Exception as e:
-                self.logger.error(
-                    "Could not parse environment variable LCSFC_COLORS:\n%s"
-                    % e
-                )
+        self.lcsfc = config.get(
+            'lcsfc', self.DEFAULT_LCSFC_COLORS
+        )
 
     def basic_info(self, x, y):
         """Return basic plot information at coordinates as JSON.
@@ -319,6 +309,7 @@ class PlotInfo:
         :param float x: X coordinate in LV95
         :param float y: Y coordinate in LV95
         """
+        self.load_config()
         try:
             sql = sql_text(self.basic_info_sql)
 
@@ -346,6 +337,7 @@ class PlotInfo:
 
         :param string egrid: The plot EGRID
         """
+        self.load_config()
         try:
             sql = sql_text(self.basic_info_by_egrid_sql)
 
@@ -411,6 +403,7 @@ class PlotInfo:
 
         :param str egrid: EGRID
         """
+        self.load_config()
         try:
             info = {}
 
