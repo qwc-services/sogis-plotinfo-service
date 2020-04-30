@@ -55,8 +55,8 @@ class PlotOwner:
 
         self.gbdbs_service_url = config.get('gbdbs_service_url')
         self.hide_owner_addresses = config.get('hide_owner_addresses', False)
-        self.site_key = config.get('site_key', '')
-        self.secret_key = config.get('secret_key', '')
+        self.site_key = config.get('recaptcha_site_key', '')
+        self.secret_key = config.get('recaptcha_secret_key', '')
 
     def captcha(self, egrid):
         """Return HTML with embedded captcha for plot owner info request.
