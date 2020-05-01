@@ -109,8 +109,6 @@
         "oereb_json_url",
         "oereb_pdf_url",
         "oereb_xml_url",
-        "recaptcha_secret_key",
-        "recaptcha_site_key",
         "sdr_infos_liegenschaft_sql",
         "sdr_infos_sdr_sql"
       ]
