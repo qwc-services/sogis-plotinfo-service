@@ -1,0 +1,123 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/qwc-services/sogis-plotinfo-service/master/schemas/sogis-plotinfo-service.json",
+  "title": "SO!GIS Plotinfo Service",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "title": "JSON Schema",
+      "description": "Reference to JSON schema of this config",
+      "type": "string",
+      "format": "uri",
+      "default": "https://raw.githubusercontent.com/qwc-services/sogis-plotinfo-service/master/schemas/sogis-plotinfo-service.json"
+    },
+    "service": {
+      "title": "Service name",
+      "type": "string",
+      "const": "plotinfo"
+    },
+    "config": {
+      "title": "Config options",
+      "type": "object",
+      "properties": {
+        "db_url": {
+          "description": "DB connection for info queries",
+          "type": "string"
+        },
+        "basic_info_sql": {
+          "description": "SQL for basic info query",
+          "type": "string"
+        },
+        "basic_info_fields": {
+          "description": "List of custom fields for basic plot info",
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "flurnamen_sql": {
+          "description": "SQL for Flurnamen query",
+          "type": "string"
+        },
+        "detailed_info_sql": {
+          "description": "SQL for additional plot information query",
+          "type": "string"
+        },
+        "land_cover_fractions_sql": {
+          "description": "SQL for land cover fractions query",
+          "type": "string"
+        },
+        "building_addresses_sql": {
+          "description": "SQL for building addresses query",
+          "type": "string"
+        },
+        "sdr_infos_liegenschaft_sql": {
+          "description": "SQL for SDR for Liegenschaft query",
+          "type": "string"
+        },
+        "sdr_infos_sdr_sql": {
+          "description": "SQL for Liegenschaften for SDR query",
+          "type": "string"
+        },
+        "lcsfc_colors": {
+          "description": "Lookup for custom land cover colors",
+          "type": "object"
+        },
+        "oereb_json_url": {
+          "description": "ÖREB-Webservice URL for generating JSON",
+          "type": "string",
+          "format": "uri"
+        },
+        "oereb_xml_url": {
+          "description": "ÖREB-Webservice URL for generating XML",
+          "type": "string",
+          "format": "uri"
+        },
+        "oereb_pdf_url": {
+          "description": "ÖREB-Webservice URL for generating PDF",
+          "type": "string",
+          "format": "uri"
+        },
+        "gbdbs_service_url": {
+          "description": "GBDBS Service URL for requesting plot owner info XML",
+          "type": "string"
+        },
+        "hide_owner_adresses": {
+          "description": "Hide addresses of plot owners",
+          "type": "boolean"
+        },
+        "recaptcha_site_key": {
+          "description": "Public key for Google reCAPTCHA service",
+          "type": "string"
+        },
+        "recaptcha_secret_key": {
+          "description": "Secret key for Google reCAPTCHA verification",
+          "type": "string"
+        }
+      },
+      "required": [
+        "basic_info_fields",
+        "basic_info_sql",
+        "building_addresses_sql",
+        "detailed_info_sql",
+        "flurnamen_sql",
+        "gbdbs_service_url",
+        "db_url",
+        "hide_owner_adresses",
+        "land_cover_fractions_sql",
+        "lcsfc_colors",
+        "oereb_json_url",
+        "oereb_pdf_url",
+        "oereb_xml_url",
+        "recaptcha_secret_key",
+        "recaptcha_site_key",
+        "sdr_infos_liegenschaft_sql",
+        "sdr_infos_sdr_sql"
+      ]
+    }
+  },
+  "required": [
+    "service",
+    "config"
+  ]
+}
