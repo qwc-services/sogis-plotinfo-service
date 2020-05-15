@@ -1,3 +1,6 @@
+[![](https://github.com/qwc-services/sogis-plotinfo-service/workflows/build/badge.svg)](https://hub.docker.com/repository/docker/sourcepole/sogis-plotinfo-service)
+[![](https://img.shields.io/docker/pulls/sourcepole/sogis-plotinfo-service)](https://hub.docker.com/repository/docker/sourcepole/sogis-plotinfo-service)
+
 PlotInfo service
 ================
 
@@ -294,21 +297,21 @@ Environment variables:
 
 See [Queries](#queries) for setting the query environment variables and their defaults.
 
-Set the `OEREB_JSON_URL` environment variable to the full JSON ÖREB-Webservice URL with a placeholder for the EGRID, 
+Set the `OEREB_JSON_URL` environment variable to the full JSON ÖREB-Webservice URL with a placeholder for the EGRID,
 e.g. 'http://example.com/main/oereb/extract/reduced/json/geometry/{egrid}'.
 
-Set the `OEREB_XML_URL` environment variable to the full XML ÖREB-Webservice URL with a placeholder for the EGRID, 
+Set the `OEREB_XML_URL` environment variable to the full XML ÖREB-Webservice URL with a placeholder for the EGRID,
 e.g. 'http://example.com/main/oereb/extract/reduced/xml/geometry/{egrid}'.
 
-Set the `OEREB_PDF_URL` environment variable to the full PDF ÖREB-Webservice URL with a placeholder for the EGRID, 
+Set the `OEREB_PDF_URL` environment variable to the full PDF ÖREB-Webservice URL with a placeholder for the EGRID,
 e.g. 'http://example.com/main/oereb/extract/reduced/pdf/geometry/{egrid}'.
 
-Set the `GBDBS_SERVICE_URL` environment variable to the full GBDBS Service URL, 
+Set the `GBDBS_SERVICE_URL` environment variable to the full GBDBS Service URL,
 e.g. 'http://example.com/gbdbs/gbdbs'.
 
 Set the `HIDE_OWNER_ADRESSES` environment variable to `True` to hide all addresses of plot owners (default: `False`).
 
-Set the `RECAPTCHA_SITE_KEY` and `RECAPTCHA_SECRET_KEY` environment variables to your Google reCAPTCHA keys. 
+Set the `RECAPTCHA_SITE_KEY` and `RECAPTCHA_SECRET_KEY` environment variables to your Google reCAPTCHA keys.
 Captcha verification for plot owner info is enabled if `RECAPTCHA_SITE_KEY` is set.
 
 See [reCAPTCHA documentation](https://developers.google.com/recaptcha/docs/v3). Register keys [here](https://g.co/recaptcha/v3).
