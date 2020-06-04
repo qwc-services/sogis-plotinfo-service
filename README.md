@@ -1,6 +1,3 @@
-[![](https://github.com/qwc-services/sogis-plotinfo-service/workflows/build/badge.svg)](https://hub.docker.com/repository/docker/sourcepole/sogis-plotinfo-service)
-[![](https://img.shields.io/docker/pulls/sourcepole/sogis-plotinfo-service)](https://hub.docker.com/repository/docker/sourcepole/sogis-plotinfo-service)
-
 PlotInfo service
 ================
 
