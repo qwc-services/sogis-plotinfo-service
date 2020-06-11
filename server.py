@@ -7,6 +7,7 @@ from flask_restplus import reqparse, Resource
 from oereb_info import OerebInfo
 from plot_info import PlotInfo
 from plot_owner import PlotOwner
+from land_reg import LandRegExtract
 
 from qwc_services_core.api import Api, CaseInsensitiveArgument
 from qwc_services_core.app import app_nocache
@@ -43,6 +44,8 @@ plot_info = PlotInfo(config_handler, db_engine, app.logger)
 oereb_info = OerebInfo(config_handler, app.logger)
 # create plot owner info
 plot_owner = PlotOwner(config_handler, db_engine, app.logger)
+# create land register extract
+land_reg = LandRegExtract(config_handler, db_engine, app.logger)
 
 # request parser
 pos_parser = reqparse.RequestParser(argument_class=CaseInsensitiveArgument)
@@ -146,6 +149,17 @@ class PlotOwner(Resource):
         """
         args = plot_owner_parser.parse_args()
         return plot_owner.info(egrid, args['token'])
+
+
+@api.route('/landreg/<egrid>')
+@api.param('egrid', 'EGRID')
+class LandReg(Resource):
+    def get(self, egrid):
+        """Land register extract
+
+        Returns the land register extract for the specified egrid as PDF
+        """
+        return land_reg.pdf(egrid)
 
 
 """ readyness probe endpoint """

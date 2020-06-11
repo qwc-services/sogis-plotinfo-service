@@ -93,6 +93,71 @@
         "recaptcha_secret_key": {
           "description": "Secret key for Google reCAPTCHA verification",
           "type": "string"
+        },
+        "qgis_server_url": {
+          "description": "QGIS Server URL",
+          "type": "string",
+          "format": "uri"
+        },
+        "db_url": {
+          "description": "DB connection",
+          "type": "string"
+        },
+        "landreg_project": {
+          "description": "QGIS project name containing the land register extract print layouts",
+          "type": "string"
+        },
+        "landreg_print_template": {
+          "description": "Print layout name, contained in <landreg_project>",
+          "type": "string"
+        },
+        "landreg_dpi": {
+          "description": "DPI for print, defaults to 300",
+          "type": "integer"
+        },
+        "landreg_srs": {
+          "description": "SRS in EPSG:XXXX format",
+          "type": "string"
+        },
+        "landreg_grid_x": {
+          "description": "Vertical grid interval, defaults to empty",
+          "type": "integer"
+        },
+        "landreg_grid_y": {
+          "description": "Horizontal grid interval, defaults to empty",
+          "type": "integer"
+        },
+        "landreg_print_layer": {
+          "description": "Comma separated list of layers, contained in <landreg_project>, to print",
+          "type": "string"
+        },
+        "landreg_print_layer_opacities": {
+          "description": "Comma separated list of opacities of the layers specified in <landreg_print_layer>, defaults to all layers rendered fully opaque",
+          "type": "string"
+        },
+        "landreg_allowed_scale_denoms": {
+          "description": "Array of allowed scale denominators, in ascending order. The first best scale containing the queried parcel is used.",
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "landreg_extra_labels": {
+          "description": "DB for extra labels to be added to the land register print query",
+          "type": "object",
+          "properties": {
+            "query": {
+              "description": "SQL query, :xmin, :xmax, :ymin, :ymax, :x, :y and :srid can be used as placeholders",
+              "type": "string"
+            },
+            "fields": {
+              "description": "Field names returned by the SQL query, and to be added to the print query",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
         }
       },
       "required": [
@@ -110,7 +175,14 @@
         "oereb_pdf_url",
         "oereb_xml_url",
         "sdr_infos_liegenschaft_sql",
-        "sdr_infos_sdr_sql"
+        "sdr_infos_sdr_sql",
+        "qgis_server_url",
+        "db_url",
+        "landreg_project",
+        "landreg_print_template",
+        "landreg_srs",
+        "landreg_print_layer",
+        "landreg_allowed_scale_denoms"
       ]
     }
   },
