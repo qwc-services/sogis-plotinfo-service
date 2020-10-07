@@ -2,7 +2,7 @@ import os
 import sys
 
 from flask import Flask, jsonify
-from flask_restplus import reqparse, Resource
+from flask_restx import reqparse, Resource
 
 from oereb_info import OerebInfo
 from plot_info import PlotInfo
