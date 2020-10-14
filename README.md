@@ -286,7 +286,7 @@ Environment variables:
 | `OEREB_XML_URL`*          | ÖREB-Webservice URL for generating XML                  |
 | `OEREB_PDF_URL`*          | ÖREB-Webservice URL for generating PDF                  |
 | `GBDBS_SERVICE_URL`*      | GBDBS Service URL for requesting plot owner info XML    |
-| `HIDE_OWNER_ADRESSES`     | Hide addresses of plot owners                           |
+| `HIDE_OWNER_ADDRESSES`     | Hide addresses of plot owners                           |
 | `RECAPTCHA_SITE_KEY`      | Public key for Google reCAPTCHA service                 |
 | `RECAPTCHA_SECRET_KEY`    | Secret key for Google reCAPTCHA verification            |
 
@@ -306,7 +306,7 @@ e.g. 'http://example.com/main/oereb/extract/reduced/pdf/geometry/{egrid}'.
 Set the `GBDBS_SERVICE_URL` environment variable to the full GBDBS Service URL,
 e.g. 'http://example.com/gbdbs/gbdbs'.
 
-Set the `HIDE_OWNER_ADRESSES` environment variable to `True` to hide all addresses of plot owners (default: `False`).
+Set the `HIDE_OWNER_ADDRESSES` environment variable to `True` to hide all addresses of plot owners (default: `False`).
 
 Set the `RECAPTCHA_SITE_KEY` and `RECAPTCHA_SECRET_KEY` environment variables to your Google reCAPTCHA keys.
 Captcha verification for plot owner info is enabled if `RECAPTCHA_SITE_KEY` is set.

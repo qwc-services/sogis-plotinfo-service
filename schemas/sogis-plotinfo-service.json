@@ -82,7 +82,7 @@
           "description": "GBDBS Service URL for requesting plot owner info XML",
           "type": "string"
         },
-        "hide_owner_adresses": {
+        "hide_owner_addresses": {
           "description": "Hide addresses of plot owners",
           "type": "boolean"
         },
@@ -168,7 +168,7 @@
         "flurnamen_sql",
         "gbdbs_service_url",
         "db_url",
-        "hide_owner_adresses",
+        "hide_owner_addresses",
         "land_cover_fractions_sql",
         "lcsfc_colors",
         "oereb_json_url",
