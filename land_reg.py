@@ -128,6 +128,7 @@ class LandRegExtract:
         height = bbox[3] - bbox[1]
         scale_w = (layout["width"] / 1000) / width
         scale_h = (layout["height"] / 1000) / height
+        scale_fitw = scale_w < scale_h
         scaleden = 1. / min(scale_w, scale_h)
 
         # Fit to allowed scales
@@ -139,13 +140,21 @@ class LandRegExtract:
             except:
                 fitscaleden = allowed_scale_denoms[len(allowed_scale_denoms) - 1]
             factor = fitscaleden / scaleden
+            center = [0.5 * (bbox[0] + bbox[2]), 0.5 * (bbox[1] + bbox[3])]
+            # Scale bounding box, while preserving layout aspect ratio
+            if scale_fitw:
+                newwidth = factor * width
+                newheight = newwidth * layout["height"] / layout["width"]
+            else:
+                newheight = factor * height
+                newwidth = newheight * layout["width"] / layout["height"]
+
             bbox = [
-                0.5 * (bbox[0] + bbox[2]) - 0.5 * factor * width,
-                0.5 * (bbox[1] + bbox[3]) - 0.5 * factor * height,
-                0.5 * (bbox[0] + bbox[2]) + 0.5 * factor * width,
-                0.5 * (bbox[1] + bbox[3]) + 0.5 * factor * height
+                center[0] - 0.5 * newwidth,
+                center[1] - 0.5 * newheight,
+                center[0] + 0.5 * newwidth,
+                center[1] + 0.5 * newheight
             ]
-            scaleden = fitscaleden
 
         params[layout["mapname"] + ":EXTENT"] = ",".join(map(str, bbox))
         params[layout["mapname"] + ":SCALE"] = str(round(fitscaleden))
