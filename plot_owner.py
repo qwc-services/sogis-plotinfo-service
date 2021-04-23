@@ -276,8 +276,9 @@ class PlotOwner:
 
               e.g. CH207506973252:575::2407:
               CH210678328270:1023:1:2581:
+              CH467822696305:803::1609:: (Abraxas)
             """
-            egrid, nr, nummer_zusatz, bfsnr, b = nummer.split(':')
+            egrid, nr, nummer_zusatz, bfsnr, b = nummer.split(':', 4)
 
             grundstuecke[nummer] = {
                 'egrid': egrid,
