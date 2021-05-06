@@ -1,9 +1,13 @@
+import os
 from datetime import datetime
 from xml.dom.minidom import parseString
 
 from flask import json, render_template, Response
 import requests
 from qwc_services_core.tenant_handler import TenantHandler
+
+
+GBDBS_VERSION = os.environ.get('GBDBS_VERSION', '2.0.5')  # 2.1
 
 
 class PlotOwner:
@@ -28,7 +32,7 @@ class PlotOwner:
             <soapenv:Header/>
             <soapenv:Body>
                 <ns:GetParcelsByIdRequest>
-                    <ns:version>2.1</ns:version>
+                    <ns:version>{version}</ns:version>
                     <ns:transactionId>{transaction_id}</ns:transactionId>
                     <ns:BezugInhalt>IndexMitEigentum</ns:BezugInhalt>
                     <ns:includeHistory>false</ns:includeHistory>
@@ -202,11 +206,15 @@ class PlotOwner:
                 "SOMAP-%s" % datetime.utcnow().strftime("%Y%m%d-%H%M%S-%f")
             )
             xml_data = self.GBDBS_REQUEST_TEMPLATE.format(
+                version=GBDBS_VERSION,
                 transaction_id=transaction_id, egrid=egrid
             ).strip()
 
             # get XML from GBDBS service
             url = self.gbdbs_service_url
+            self.logger.error(
+                "POST GBDBS XML request to %s:\n%s" % (url, xml_data)
+            )
             headers = {
                 'content-type': 'text/xml; charset=utf-8',
                 'accept': 'application/xml'
@@ -222,6 +230,7 @@ class PlotOwner:
                 # handle server error
                 raise Exception("GBDBS Server Error:\n\n%s" % response.text)
 
+            self.logger.error(response.text)
             # parse XML
             doc = parseString(response.text)
             response_node = self.find(
@@ -237,6 +246,12 @@ class PlotOwner:
             # collect Recht for EGRID
             rechte = self.collect_rechte(response_node, egrid)
 
+            self.logger.error({
+                'egrid': egrid,
+                'grundstuecke': grundstuecke,
+                'personen': personen,
+                'rechte': rechte
+            })
             return {
                 'egrid': egrid,
                 'grundstuecke': grundstuecke,
@@ -310,6 +325,7 @@ class PlotOwner:
             person_info = (
                 self.find(node, '//NatuerlichePerson') or
                 self.find(node, '//SchweizerischeJuristischePerson') or
+                self.find(node, '//JuristischePerson') or
                 self.find(node, '//OeffentlicheKoerperschaft') or
                 self.find(node, '//AuslaendischeRechtsform')
             )
@@ -317,10 +333,13 @@ class PlotOwner:
                 # Person
                 person = {
                     'name': self.node_value(person_info, 'Name'),
-                    'vornamen': self.node_value(person_info, 'Vornamen'),
+                    'vornamen': self.node_value(person_info, 'Vornamen') or
+                    self.node_value(person_info, 'Vorname')
                 }
 
-                adresse = self.find(person_info, '//Adresse')
+                adresse = self.find(
+                    person_info, '//Adresse/Adresse') or self.find(
+                    person_info, '//Adresse')
                 if not self.hide_owner_addresses and adresse:
                     person.update({
                         'strasse': self.node_value(adresse, 'Strasse'),
@@ -339,7 +358,8 @@ class PlotOwner:
                     for mitglied in gemeinschaft.getElementsByTagNameNS(
                         '*', 'Mitglieder'
                     ):
-                        teilhaber.append(self.node_value(mitglied, 'ref'))
+                        teilhaber.append(self.node_value(mitglied, 'ref') or
+                                         mitglied.firstChild.nodeValue)
 
                     personen[nummer] = {
                         'name': self.node_value(gemeinschaft, '//Name'),
@@ -510,7 +530,10 @@ class PlotOwner:
                                 berechtigte += b.get('berechtigte')
 
                 # sort keys
-                sort_nummer = int(grundstueck.get('nummer') or 0)
+                try:
+                    sort_nummer = int(grundstueck.get('nummer') or 0)
+                except ValueError:
+                    sort_nummer = 0
                 sort_nummer_zusatz = int(
                     grundstueck.get('nummer_zusatz') or 0
                 )
