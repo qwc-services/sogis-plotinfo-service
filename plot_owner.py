@@ -440,7 +440,8 @@ class PlotOwner:
                     # sort
                     mitglieder.sort(
                         key=lambda l: (
-                            l.get('vornamen'), l.get('name'), l.get('strasse')
+                            l.get('vornamen') or '',
+                            l.get('name'), l.get('strasse')
                         )
                     )
 
