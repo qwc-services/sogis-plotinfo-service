@@ -495,7 +495,7 @@ class PlotInfo:
             # lookup color
             lcsfc = self.lcsfc.get(row['art_txt'], '#ffffff')
 
-            if round(row['area'], 1) == 0:
+            if round(row['area'], 0) == 0:
                 continue
 
             land_cover.append({
