@@ -65,18 +65,15 @@
         },
         "oereb_json_url": {
           "description": "ÖREB-Webservice URL for generating JSON",
-          "type": "string",
-          "format": "uri"
+          "type": "string"
         },
         "oereb_xml_url": {
           "description": "ÖREB-Webservice URL for generating XML",
-          "type": "string",
-          "format": "uri"
+          "type": "string"
         },
         "oereb_pdf_url": {
           "description": "ÖREB-Webservice URL for generating PDF",
-          "type": "string",
-          "format": "uri"
+          "type": "string"
         },
         "gbdbs_service_url": {
           "description": "GBDBS Service URL for requesting plot owner info XML",
@@ -96,8 +93,7 @@
         },
         "qgis_server_url": {
           "description": "QGIS Server URL",
-          "type": "string",
-          "format": "uri"
+          "type": "string"
         },
         "db_url": {
           "description": "DB connection",
