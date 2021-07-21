@@ -300,7 +300,7 @@ class PlotInfo:
 
         # LCSFC_COLORS
         self.lcsfc = config.get(
-            'lcsfc', self.DEFAULT_LCSFC_COLORS
+            'lcsfc_colors', self.DEFAULT_LCSFC_COLORS
         )
 
     def basic_info(self, x, y):
