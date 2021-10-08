@@ -7,7 +7,7 @@ import requests
 from qwc_services_core.tenant_handler import TenantHandler
 
 
-GBDBS_VERSION = os.environ.get('GBDBS_VERSION', '2.0.5')  # 2.1
+GBDBS_VERSION = os.environ.get('GBDBS_VERSION', '2.1')
 
 
 class PlotOwner:
