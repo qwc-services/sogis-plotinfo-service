@@ -212,7 +212,7 @@ class PlotOwner:
 
             # get XML from GBDBS service
             url = self.gbdbs_service_url
-            self.logger.error(
+            self.logger.debug(
                 "POST GBDBS XML request to %s:\n%s" % (url, xml_data)
             )
             headers = {
@@ -230,7 +230,7 @@ class PlotOwner:
                 # handle server error
                 raise Exception("GBDBS Server Error:\n\n%s" % response.text)
 
-            self.logger.error(response.text)
+            self.logger.debug(response.text)
             # parse XML
             doc = parseString(response.text)
             response_node = self.find(
@@ -246,7 +246,7 @@ class PlotOwner:
             # collect Recht for EGRID
             rechte = self.collect_rechte(response_node, egrid)
 
-            self.logger.error({
+            self.logger.debug({
                 'egrid': egrid,
                 'grundstuecke': grundstuecke,
                 'personen': personen,
