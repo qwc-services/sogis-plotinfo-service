@@ -6,6 +6,7 @@ jobs:
 
     build:
       runs-on: ubuntu-latest
+      if: github.event_name == 'push' && contains(github.ref, 'refs/tags/')
       steps:
 
       - uses: actions/checkout@master
