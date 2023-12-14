@@ -104,7 +104,7 @@ class LandRegExtract:
             sql = sql_text(basic_info_by_egrid_sql)
             conn = db.connect()
             result = conn.execute(
-                sql, egrid=egrid, srid=int(crs.replace("EPSG:", "")), buffer=1
+                sql, {"egrid": egrid, "srid": int(crs.replace("EPSG:", "")), "buffer": 1}
             )
             row = result.fetchone()
             if row is None:
@@ -168,7 +168,16 @@ class LandRegExtract:
                 sql = sql_text(extra_labels["query"])
                 conn = db.connect()
                 result = conn.execute(
-                    sql, egrid=egrid, srid=int(crs.replace("EPSG:", "")), x=(0.5 * (bbox[0] + bbox[2])), y=(0.5 * (bbox[1] + bbox[3])), xmin=bbox[0], ymin=bbox[1], xmax=bbox[2], ymax=bbox[3]
+                    sql, {
+                        "egrid": egrid,
+                        "srid": int(crs.replace("EPSG:", "")),
+                        "x": (0.5 * (bbox[0] + bbox[2])),
+                        "y": (0.5 * (bbox[1] + bbox[3])),
+                        "xmin": bbox[0],
+                        "ymin": bbox[1],
+                        "xmax": bbox[2],
+                        "ymax": bbox[3]
+                    }
                 )
                 row = result.fetchone()
                 if row is not None:

@@ -316,7 +316,7 @@ class PlotInfo:
             conn = self.db.connect()
 
             result = conn.execute(
-                sql, x=x, y=y, srid=self.QUERY_SRID, buffer=self.QUERY_BUFFER
+                sql, {"x": x, "y": y, "srid": self.QUERY_SRID, "buffer": self.QUERY_BUFFER}
             )
             plots = self.format_basic_info(result, conn)
             conn.close()
@@ -344,7 +344,7 @@ class PlotInfo:
             conn = self.db.connect()
 
             result = conn.execute(
-                sql, egrid=egrid, srid=self.QUERY_SRID, buffer=self.QUERY_BUFFER
+                sql, {"egrid": egrid, "srid": self.QUERY_SRID, "buffer": self.QUERY_BUFFER}
             )
             plots = self.format_basic_info(result, conn)
             conn.close()
@@ -411,7 +411,7 @@ class PlotInfo:
 
             conn = self.db.connect()
 
-            result = conn.execute(sql, egrid=egrid)
+            result = conn.execute(sql, {"egrid": egrid})
             for row in result:
                 land_cover = self.get_land_cover_fractions(egrid, conn)
 
@@ -474,7 +474,7 @@ class PlotInfo:
 
         sql = sql_text(self.flurnamen_sql)
 
-        result = conn.execute(sql, egrid=egrid)
+        result = conn.execute(sql, {"egrid": egrid})
         for row in result:
             flurnamen.append(row['flurname'])
 
@@ -490,7 +490,7 @@ class PlotInfo:
 
         sql = sql_text(self.land_cover_fractions_sql)
 
-        result = conn.execute(sql, egrid=egrid)
+        result = conn.execute(sql, {"egrid": egrid})
         for row in result:
             # lookup color
             lcsfc = self.lcsfc.get(row['art_txt'], '#ffffff')
@@ -517,7 +517,7 @@ class PlotInfo:
 
         sql = sql_text(self.building_addresses_sql)
 
-        result = conn.execute(sql, egrid=egrid)
+        result = conn.execute(sql, {"egrid": egrid})
         for row in result:
             addresses.append({
                 'street': row['strassenname'],
@@ -542,7 +542,7 @@ class PlotInfo:
 
             sql = sql_text(self.sdr_infos_liegenschaft_sql)
 
-            result = conn.execute(sql, egrid=egrid)
+            result = conn.execute(sql, {"egrid": egrid})
             for row in result:
                 sdr_infos.append({
                     'number': row['nummer'],
@@ -554,7 +554,7 @@ class PlotInfo:
 
             sql = sql_text(self.sdr_infos_sdr_sql)
 
-            result = conn.execute(sql, egrid=egrid)
+            result = conn.execute(sql, {"egrid": egrid})
             for row in result:
                 sdr_infos.append({
                     'number': row['nummer'],
