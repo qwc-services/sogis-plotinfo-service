@@ -319,7 +319,7 @@ Usage
 
 Start PlotInfo service:
 
-    OEREB_JSON_URL=... OEREB_XML_URL=... OEREB_PDF_URL=... GBDBS_SERVICE_URL=... python server.py
+    OEREB_JSON_URL=... OEREB_XML_URL=... OEREB_PDF_URL=... GBDBS_SERVICE_URL=... python src/server.py
 
 API documentation:
 
