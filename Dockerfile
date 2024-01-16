@@ -1,6 +1,6 @@
 # WSGI service environment
 
-FROM sourcepole/qwc-uwsgi-base:alpine-v2022.01.26
+FROM sourcepole/qwc-uwsgi-base:alpine-v2024.01.16
 
 ADD requirements.txt /srv/qwc_service/requirements.txt
 
