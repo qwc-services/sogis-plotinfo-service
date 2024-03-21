@@ -370,14 +370,14 @@ class PlotInfo:
                 if name == '_flurnamen_':
                     # custom query for Flurnamen
                     value = ", ".join(
-                        self.get_flurnamen(row['egrid'], conn)
+                        self.get_flurnamen(row.egrid, conn)
                     )
                 elif name == 'flaechenmass':
                     # custom format for area
-                    value = "%s m<sup>2</sup>" % self.format_number(row[name])
-                elif name in row:
+                    value = "%s m<sup>2</sup>" % self.format_number(row.flaechenmass)
+                elif name in row._mapping:
                     # value from basic info query
-                    value = row[name]
+                    value = getattr(row, name)
                 else:
                     self.logger.warning(
                         "Missing field '%s' in query result" % name
@@ -390,11 +390,11 @@ class PlotInfo:
                 })
 
             plots.append({
-                'egrid': row['egrid'],
-                'label': "%s Nr. %s" % (row['art_txt'], row['nummer']),
+                'egrid': row.egrid,
+                'label': "%s Nr. %s" % (row.art_txt, row.nummer),
                 'fields': fields,
-                'geom': row['geom'],
-                'bbox': [row['xmin'], row['ymin'], row['xmax'], row['ymax']]
+                'geom': row.geom,
+                'bbox': [row.xmin, row.ymin, row.xmax, row.ymax]
             })
         return plots
 
@@ -420,19 +420,19 @@ class PlotInfo:
                 for lc in land_cover:
                     total_area += round(lc['area'])
                 rounding_difference = abs(
-                    round(row['flaechenmass']) - total_area
+                    round(row.flaechenmass) - total_area
                 )
 
                 info = {
                     'egrid': egrid,
-                    'area': row['flaechenmass'],
+                    'area': row.flaechenmass,
                     'landcover': land_cover,
                     'rounding_difference': rounding_difference,
                     'flurnamen': ", ".join(self.get_flurnamen(egrid, conn)),
                     'addresses': self.get_building_addresses(egrid, conn),
-                    'sdr': self.get_sdr_infos(egrid, row['art'], conn),
-                    'grundbuchamt': row['grundbuchamt'],
-                    'nfgeometer': row['nfgeometer']
+                    'sdr': self.get_sdr_infos(egrid, row.art, conn),
+                    'grundbuchamt': row.grundbuchamt,
+                    'nfgeometer': row.nfgeometer
                 }
 
             conn.close()
@@ -476,7 +476,7 @@ class PlotInfo:
 
         result = conn.execute(sql, {"egrid": egrid})
         for row in result:
-            flurnamen.append(row['flurname'])
+            flurnamen.append(row.flurname)
 
         return flurnamen
 
@@ -493,15 +493,15 @@ class PlotInfo:
         result = conn.execute(sql, {"egrid": egrid})
         for row in result:
             # lookup color
-            lcsfc = self.lcsfc.get(row['art_txt'], '#ffffff')
+            lcsfc = self.lcsfc.get(row.art_txt, '#ffffff')
 
-            if round(row['area'], 0) == 0:
+            if round(row.area, 0) == 0:
                 continue
 
             land_cover.append({
-                'type': row['art_txt'],
-                'area': row['area'],
-                'area_percent': row['area_percent'],
+                'type': row.art_txt,
+                'area': row.area,
+                'area_percent': row.area_percent,
                 'color': lcsfc
             })
 
@@ -520,10 +520,10 @@ class PlotInfo:
         result = conn.execute(sql, {"egrid": egrid})
         for row in result:
             addresses.append({
-                'street': row['strassenname'],
-                'number': row['hausnummer'],
-                'zip': row['plz'],
-                'city': row['ortschaft']
+                'street': row.strassenname,
+                'number': row.hausnummer,
+                'zip': row.plz,
+                'city': row.ortschaft
             })
 
         return addresses
@@ -545,9 +545,9 @@ class PlotInfo:
             result = conn.execute(sql, {"egrid": egrid})
             for row in result:
                 sdr_infos.append({
-                    'number': row['nummer'],
-                    'type': row['art_txt'],
-                    'area': row['area']
+                    'number': row.nummer,
+                    'type': row.art_txt,
+                    'area': row.area
                 })
         else:
             # SDR: get Liegenschaften
@@ -557,9 +557,9 @@ class PlotInfo:
             result = conn.execute(sql, {"egrid": egrid})
             for row in result:
                 sdr_infos.append({
-                    'number': row['nummer'],
-                    'type': row['art_txt'],
-                    'area': row['area']
+                    'number': row.nummer,
+                    'type': row.art_txt,
+                    'area': row.area
                 })
 
         return sdr_infos
