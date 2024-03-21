@@ -112,7 +112,7 @@ class LandRegExtract:
                     'error': 'EGRID not found: ' + egrid,
                     'success': False
                 }
-            bbox = [float(row['xmin']), float(row['ymin']), float(row['xmax']), float(row['ymax'])]
+            bbox = [float(row.xmin), float(row.ymin), float(row.xmax), float(row.ymax)]
         except Exception as e:
             self.logger.error(e)
             return {
@@ -182,7 +182,7 @@ class LandRegExtract:
                 row = result.fetchone()
                 if row is not None:
                     for label in extra_labels["fields"]:
-                        params[label.upper()] = row[label]
+                        params[label.upper()] = getattr(row, label)
             except Exception as e:
                 return {
                     'error': "Error querying extra fields: " + str(e),
