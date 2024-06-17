@@ -323,7 +323,7 @@ class PlotOwner:
             nummer = self.node_value(node, '//Nummer')
 
             person_info = (
-                self.find(node, '//NatuerlichePerson') or
+                self.find(node, '//NatuerlichePersonGB') or
                 self.find(node, '//SchweizerischeJuristischePerson') or
                 self.find(node, '//JuristischePerson') or
                 self.find(node, '//OeffentlicheKoerperschaft') or
