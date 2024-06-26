@@ -329,7 +329,8 @@ class PlotOwner:
             if person_info and not person_info.hasAttribute('bisEGBTBID'):
                 # Person
                 person = {
-                    'name': self.node_value(person_info, 'Name'),
+                    'name': self.node_value(person_info, 'Name') or
+                    self.node_value(person_info, 'Name_Firma'),
                     'vornamen': self.node_value(person_info, 'Vornamen') or
                     self.node_value(person_info, 'Vorname')
                 }
