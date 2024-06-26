@@ -326,7 +326,7 @@ class PlotOwner:
                 self.find(node, '//InhaltNatuerlichePersonGB') or
                 self.find(node, '//InhaltJuristischePersonGB')
             )
-            if person_info:
+            if person_info and not person_info.hasAttribute('bisEGBTBID'):
                 # Person
                 person = {
                     'name': self.node_value(person_info, 'Name'),
