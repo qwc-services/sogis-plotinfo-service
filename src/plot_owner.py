@@ -350,7 +350,7 @@ class PlotOwner:
                 personen[nummer] = person
             else:
                 # Gemeinschaft
-                gemeinschaft = self.find(node, '//InhaltGemeinschaft')
+                gemeinschaft = self.find(node, '//Gemeinschaft')
                 if gemeinschaft:
                     teilhaber = []
                     for mitglied in gemeinschaft.getElementsByTagNameNS(
