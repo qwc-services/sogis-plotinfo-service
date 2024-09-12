@@ -29,12 +29,17 @@ class PlotOwner:
         <soapenv:Envelope
             xmlns:ns="http://schemas.geo.admin.ch/BJ/TGBV/GBDBS/2.1"
             xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-            <soapenv:Header/>
+            <soapenv:Header>
+                <enq:enquirer xmlns:enq="http://www.bedag.ch/raum/gdbds/Enquirer/1.0">
+                <enq:id>WGC</enq:id>
+                <enq:name>WebGISClient</enq:name>
+                </enq:enquirer>
+            </soapenv:Header>
             <soapenv:Body>
                 <ns:GetParcelsByIdRequest>
                     <ns:version>{version}</ns:version>
                     <ns:transactionId>{transaction_id}</ns:transactionId>
-                    <ns:BezugInhalt>IndexMitEigentum</ns:BezugInhalt>
+                    <ns:BezugInhalt>Oeffentlich</ns:BezugInhalt>
                     <ns:includeHistory>false</ns:includeHistory>
                     <ns:Id>{egrid}::::</ns:Id>
                 </ns:GetParcelsByIdRequest>
