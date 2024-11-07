@@ -83,6 +83,10 @@
           "description": "Hide addresses of plot owners",
           "type": "boolean"
         },
+        "bezug_inhalt": {
+          "description": "Value of BezugInhalt in the GBDBS request (default: IndexMitEigentum)",
+          "type": "string"
+        },
         "recaptcha_site_key": {
           "description": "Public key for Google reCAPTCHA service",
           "type": "string"

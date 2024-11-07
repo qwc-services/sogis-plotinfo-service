@@ -39,7 +39,7 @@ class PlotOwner:
                 <ns:GetParcelsByIdRequest>
                     <ns:version>{version}</ns:version>
                     <ns:transactionId>{transaction_id}</ns:transactionId>
-                    <ns:BezugInhalt>Oeffentlich</ns:BezugInhalt>
+                    <ns:BezugInhalt>{bezug_inhalt}</ns:BezugInhalt>
                     <ns:includeHistory>false</ns:includeHistory>
                     <ns:Id>{egrid}::::</ns:Id>
                 </ns:GetParcelsByIdRequest>
@@ -66,6 +66,7 @@ class PlotOwner:
         self.hide_owner_addresses = config.get('hide_owner_addresses', False)
         self.site_key = config.get('recaptcha_site_key', '')
         self.secret_key = config.get('recaptcha_secret_key', '')
+        self.bezug_inhalt = config.get('bezug_inhalt', 'IndexMitEigentum')
 
     def captcha(self, egrid):
         """Return HTML with embedded captcha for plot owner info request.
@@ -212,7 +213,8 @@ class PlotOwner:
             )
             xml_data = self.GBDBS_REQUEST_TEMPLATE.format(
                 version=GBDBS_VERSION,
-                transaction_id=transaction_id, egrid=egrid
+                transaction_id=transaction_id, egrid=egrid,
+                bezug_inhalt=self.bezug_inhalt
             ).strip()
 
             # get XML from GBDBS service
