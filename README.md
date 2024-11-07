@@ -290,6 +290,7 @@ Environment variables:
 | `RECAPTCHA_SITE_KEY`      | Public key for Google reCAPTCHA service                 |
 | `RECAPTCHA_SECRET_KEY`    | Secret key for Google reCAPTCHA verification            |
 | `GBDBS_VERSION`           | GBDBS version (default: 2.1)                            |
+| `BEZUG_INHALT`            | Value of BezugInhalt in the GBDBS request (default: IndexMitEigentum) |
 
 * mandatory
 
