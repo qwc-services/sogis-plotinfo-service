@@ -286,9 +286,10 @@ Environment variables:
 | `OEREB_XML_URL`*          | ÖREB-Webservice URL for generating XML                  |
 | `OEREB_PDF_URL`*          | ÖREB-Webservice URL for generating PDF                  |
 | `GBDBS_SERVICE_URL`*      | GBDBS Service URL for requesting plot owner info XML    |
-| `HIDE_OWNER_ADDRESSES`     | Hide addresses of plot owners                           |
+| `HIDE_OWNER_ADDRESSES`     | Hide addresses of plot owners                          |
 | `RECAPTCHA_SITE_KEY`      | Public key for Google reCAPTCHA service                 |
 | `RECAPTCHA_SECRET_KEY`    | Secret key for Google reCAPTCHA verification            |
+| `GBDBS_VERSION`           | GBDBS version (default: 2.1)                            |
 
 * mandatory
 
