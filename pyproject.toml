@@ -1,6 +1,6 @@
 [project]
 name = "sogis-plotinfo-service"
-version = "v2025.01.23"
+version = "v2025.01.27"
 description = "PlotInfo service"
 readme = "README.md"
 requires-python = ">=3.10"
