@@ -363,14 +363,10 @@ Plot owner info with captcha verification (called from QWC2 PlotOwnerInfo):
 Development
 -----------
 
-Create a virtual environment:
+Install dependencies and run service:
 
-    python3 -m venv .venv
+    uv run src/server.py
 
-Activate virtual environment:
+With config path:
 
-    source .venv/bin/activate
-
-Install requirements:
-
-    pip install -r requirements.txt
+    CONFIG_PATH=/PATH/TO/CONFIGS/ uv run src/server.py
