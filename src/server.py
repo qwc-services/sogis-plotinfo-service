@@ -1,6 +1,3 @@
-import os
-import sys
-
 from flask import Flask, jsonify
 from flask_restx import reqparse, Resource
 
