@@ -66,6 +66,7 @@ class PlotOwner:
         self.hide_owner_addresses = config.get('hide_owner_addresses', False)
         self.site_key = config.get('recaptcha_site_key', '')
         self.secret_key = config.get('recaptcha_secret_key', '')
+        self.min_score = config.get('recaptcha_min_score', 0.5)
         self.bezug_inhalt = config.get('bezug_inhalt', 'IndexMitEigentum')
 
     def captcha(self, egrid):
@@ -117,6 +118,15 @@ class PlotOwner:
         # check response
         res = json.loads(response.text)
         if res['success']:
+            score = res.get('score', 0.0)
+            if score < self.min_score:
+                # deny access if reCAPTCHA score is too low
+                self.logger.info(
+                    "Captcha verified, but score is too low (%s < %s)" %
+                    (score, self.min_score)
+                )
+                return False
+
             self.logger.info("Captcha verified")
             return True
         else:

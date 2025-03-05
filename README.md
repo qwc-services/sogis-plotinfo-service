@@ -286,10 +286,11 @@ Environment variables:
 | `OEREB_XML_URL`*          | ÖREB-Webservice URL for generating XML                  |
 | `OEREB_PDF_URL`*          | ÖREB-Webservice URL for generating PDF                  |
 | `GBDBS_SERVICE_URL`*      | GBDBS Service URL for requesting plot owner info XML    |
-| `HIDE_OWNER_ADDRESSES`     | Hide addresses of plot owners                          |
+| `HIDE_OWNER_ADDRESSES`    | Hide addresses of plot owners (default: `False`)        |
 | `RECAPTCHA_SITE_KEY`      | Public key for Google reCAPTCHA service                 |
 | `RECAPTCHA_SECRET_KEY`    | Secret key for Google reCAPTCHA verification            |
-| `GBDBS_VERSION`           | GBDBS version (default: 2.1)                            |
+| `RECAPTCHA_MIN_SCORE`     | Minimum reCAPTCHA score required (default: `0.5`)       |
+| `GBDBS_VERSION`           | GBDBS version (default: `2.1`)                          |
 | `BEZUG_INHALT`            | Value of BezugInhalt in the GBDBS request (default: IndexMitEigentum) |
 
 * mandatory
@@ -312,6 +313,8 @@ Set the `HIDE_OWNER_ADDRESSES` environment variable to `True` to hide all addres
 
 Set the `RECAPTCHA_SITE_KEY` and `RECAPTCHA_SECRET_KEY` environment variables to your Google reCAPTCHA keys.
 Captcha verification for plot owner info is enabled if `RECAPTCHA_SITE_KEY` is set.
+
+Set the `RECAPTCHA_MIN_SCORE` environment variable to the minimum reCAPTCHA score (`0.0` - `1.0`) required for viewing the plot owner info (default: `0.5`).
 
 See [reCAPTCHA documentation](https://developers.google.com/recaptcha/docs/v3). Register keys [here](https://g.co/recaptcha/v3).
 
