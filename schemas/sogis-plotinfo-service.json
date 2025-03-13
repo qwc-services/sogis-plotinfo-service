@@ -91,6 +91,10 @@
           "description": "Secret key for Google reCAPTCHA verification",
           "type": "string"
         },
+        "recaptcha_min_score": {
+          "description": "Minimum score required for Google reCAPTCHA verification (0.0 - 1.0)",
+          "type": "number"
+        },
         "qgis_server_url": {
           "description": "QGIS Server URL",
           "type": "string"
