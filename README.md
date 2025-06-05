@@ -272,6 +272,7 @@ Environment variables:
 
 | Variable                  | Description                                             |
 |---------------------------|---------------------------------------------------------|
+| `JWT_SECRET_KEY`          | JWT secret key for token based authentication, shared with QWC Services |
 | `GEODB_URL`               | GeoDB connection for info queries (default: `postgresql:///?service=sogis_services`) |
 | `BASIC_INFO_SQL`          | SQL for basic info query                                |
 | `BASIC_INFO_FIELDS`       | List of custom fields for basic plot info               |

@@ -82,11 +82,12 @@ class PlotOwner:
             content_type='text/html; charset=utf-8',
         )
 
-    def verify_captcha(self, captcha_token):
+    def verify_captcha(self, identity, captcha_token):
         """Verify captcha response token.
 
         Only enabled if RECAPTCHA_SITE_KEY is set.
 
+        :param obj identity: User identity
         :param str captcha_token: Captcha response token for verification
         """
         if self.site_key == '':
@@ -117,32 +118,40 @@ class PlotOwner:
 
         # check response
         res = json.loads(response.text)
+        self.logger.debug("Captcha verification response: %s" % res)
         if res['success']:
-            score = res.get('score', 0.0)
-            if score < self.min_score:
-                # deny access if reCAPTCHA score is too low
-                self.logger.info(
-                    "Captcha verified, but score is too low (%s < %s)" %
-                    (score, self.min_score)
-                )
-                return False
+            if identity is None:
+                # check score if user is not signed in
+                score = res.get('score', 0.0)
+                if score < self.min_score:
+                    # deny access if reCAPTCHA score is too low
+                    self.logger.info(
+                        "Captcha verified, but score is too low (%s < %s)" %
+                        (score, self.min_score)
+                    )
+                    return False
 
-            self.logger.info("Captcha verified")
+                self.logger.info("Captcha verified")
+            else:
+                # skip score check if user is signed in
+                self.logger.info("Captcha verified for signed in user")
+
             return True
         else:
             self.logger.warning("Captcha verification failed: %s" % res)
 
         return False
 
-    def info(self, egrid, captcha_token):
+    def info(self, identity, egrid, captcha_token):
         """Return flattened plot owner information for EGRID as JSON.
 
+        :param obj identity: User identity
         :param str egrid: EGRID
         :param str captcha_token: Captcha response token for verification
         """
         self.load_config()
         try:
-            if not self.verify_captcha(captcha_token):
+            if not self.verify_captcha(identity, captcha_token):
                 return {
                     'error': "Captcha verification failed",
                     'success': False

@@ -8,6 +8,7 @@ from land_reg import LandRegExtract
 
 from qwc_services_core.api import Api, CaseInsensitiveArgument
 from qwc_services_core.app import app_nocache
+from qwc_services_core.auth import auth_manager, optional_auth, get_identity
 from qwc_services_core.database import DatabaseEngine
 from qwc_services_core.runtime_config import RuntimeConfig
 
@@ -31,6 +32,9 @@ app.config.SWAGGER_UI_DOC_EXPANSION = 'list'
 
 # disable verbose 404 error message
 app.config['ERROR_404_HELP'] = False
+
+# setup the Flask-JWT-Extended extension
+jwt = auth_manager(app)
 
 config_handler = RuntimeConfig("plotinfo", app.logger)
 db_engine = DatabaseEngine()
@@ -139,13 +143,14 @@ class PlotOwnerCaptcha(Resource):
 class PlotOwner(Resource):
     @api.param('token', 'reCAPTCHA response token')
     @api.expect(plot_owner_parser)
+    @optional_auth
     def get(self, egrid):
         """Plot owner
 
         Return additional plot owner information for EGRID.
         """
         args = plot_owner_parser.parse_args()
-        return plot_owner.info(egrid, args['token'])
+        return plot_owner.info(get_identity(), egrid, args['token'])
 
 
 @api.route('/landreg/<egrid>')
