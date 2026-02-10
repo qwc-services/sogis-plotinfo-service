@@ -14,11 +14,60 @@ Uses an [ÖREB-Webservice](https://www.cadastre.ch/de/manual-oereb/service/webse
 Uses a [GBDBS Service](https://www.egris.admin.ch/dam/data/egris/begleitgruppe/2015-01-21/gbdbs-auskunft-d.pdf) for plot owner info requests.
 
 
-Dependencies
-------------
+Configuration
+-------------
 
-* [ÖREB-Webservice](https://www.cadastre.ch/de/manual-oereb/service/webservice.html)
-* [GBDBS Service](https://www.egris.admin.ch/dam/data/egris/begleitgruppe/2015-01-21/gbdbs-auskunft-d.pdf)
+The static config files are stored as JSON files in `$CONFIG_PATH` with subdirectories for each tenant,
+e.g. `$CONFIG_PATH/default/*.json`. The default tenant name is `default`.
+
+### Plotinfo Service config
+
+* [JSON schema](schemas/sogis-plotinfo-service.json)
+* File location: `$CONFIG_PATH/<tenant>/plotinfoConfig.json`
+
+Example:
+
+```json
+  "config": {
+    "oereb_json_url": "http://example.com/main/oereb/extract/reduced/json/geometry/{egrid}",
+    "oereb_xml_url": "http://example.com/main/oereb/extract/reduced/xml/geometry/{egrid}",
+    "oereb_pdf_url": "http://example.com/main/oereb/extract/reduced/pdf/geometry/{egrid}",
+    "gbdbs_service_url": "http://example.com/gbdbs/gbdbs",
+    "basic_info_sql": "<see below>",
+    "basic_info_fields": "<see below>",
+    "flurnamen_sql": "<see below>",
+    "detailed_info_sql": "<see below>",
+    "land_cover_fractions_sql": "<see below>",
+    "building_addresses_sql": "<see below>",
+    "sdr_infos_liegenschaft_sql": "<see below>",
+    "sdr_infos_sdr_sql": "<see below>",
+    "lcsfc_colors": "<see below>"
+  }
+```
+
+See [Queries](#queries) for setting the query environment variables and their defaults.
+
+Set `oereb_json_url` to the full JSON ÖREB-Webservice URL with a placeholder for the EGRID.
+
+Set `oereb_xml_url` to the full XML ÖREB-Webservice URL with a placeholder for the EGRID.
+
+Set `oereb_pdf_url` to the full PDF ÖREB-Webservice URL with a placeholder for the EGRID.
+
+Set `gbdbs_service_url` to the full GBDBS Service URL.
+
+Set `hide_owner_addresses` to `true` to hide all addresses of plot owners (default: `false`).
+
+Set `recaptcha_site_key` and `recaptcha_secret_key` to your Google reCAPTCHA keys.
+Captcha verification for plot owner info is enabled if `recaptcha_site_key` is set.
+
+Set `recaptcha_min_score` to the minimum reCAPTCHA score (`0.0` - `1.0`) required for viewing the plot owner info (default: `0.5`).
+
+See [reCAPTCHA documentation](https://developers.google.com/recaptcha/docs/v3). Register keys [here](https://g.co/recaptcha/v3).
+
+
+### Environment variables
+
+Config options in the config file can be overridden by equivalent uppercase environment variables.
 
 
 Queries
@@ -26,13 +75,14 @@ Queries
 
 ### Basic plot info
 
-SQL for basic info query:
+**SQL for basic info query:**
 
-* ENV: `BASIC_INFO_SQL`
+* config: `basic_info_sql`
 * input: `x`, `y`, `srid`, `buffer`
-* output: `egrid`, `nummer`, `art_txt`, optional custom fields (see `BASIC_INFO_FIELDS`)
+* output: `egrid`, `nummer`, `art_txt`, optional custom fields (see `basic_info_fields`)
 
 Example:
+
 ```sql
 SELECT
     g.egrid, g.nummer, g.art_txt, g.flaechenmass,
@@ -56,17 +106,16 @@ WHERE ST_Intersects(
 );
 ```
 
-Custom info fields for basic info query as list of `[{"<query field>": "<label>"}]`:
+Custom info fields for basic info query can be set via `basic_info_fields` as list of `[{"<query field>": "<label>"}]`.
 
-* ENV: `BASIC_INFO_FIELDS`
-
-Add these query fields to the SELECT fields in the `BASIC_INFO_SQL` query.
+Add these query fields to the SELECT fields in the `basic_info_sql` query.
 
 The query field `flaechenmass` is formatted as `1'234 m²`.
 
 The special query field `_flurnamen_` is used to get values from a separate Flurnamen query.
 
 Example:
+
 ```json
 [
   {"gemeinde": "Gemeinde"},
@@ -79,13 +128,14 @@ Example:
 ]
 ```
 
-SQL for Flurnamen query for plot with EGRID:
+**SQL for Flurnamen query for plot with EGRID:**
 
-* ENV: `FLURNAMEN_SQL`
+* config: `flurnamen_sql`
 * input: `egrid`
 * output: `flurname`
 
 Example:
+
 ```sql
 SELECT
     f.flurname
@@ -100,13 +150,14 @@ ORDER BY f.flurname;
 
 ### Detailed plot info
 
-SQL for additional plot information query for EGRID:
+**SQL for additional plot information query for EGRID:**
 
-* ENV: `DETAILED_INFO_SQL`
+* config: `detailed_info_sql`
 * input: `egrid`
 * output: `flaechenmass`, `art`, `grundbuchamt`, `nfgeometer`
 
 Example:
+
 ```sql
 SELECT
     g.flaechenmass, g.art, 'TODO' AS grundbuchamt, 'TODO' AS nfgeometer
@@ -115,13 +166,14 @@ FROM
 WHERE g.egrid = :egrid LIMIT 1;
 ```
 
-SQL for querying land cover fractions inside plot with EGRID:
+**SQL for querying land cover fractions inside plot with EGRID:**
 
-* ENV: `LAND_COVER_FRACTIONS_SQL`
+* ENV: `land_cover_fractions_sql`
 * input: `egrid`
 * output: `area`, `area_percent`, `art`, `art_txt`
 
 Example:
+
 ```sql
 WITH bodenbedeckung AS (
     SELECT
@@ -144,13 +196,14 @@ GROUP BY art, art_txt
 ORDER BY area DESC;
 ```
 
-SQL for querying building addresses inside plot with EGRID:
+**SQL for querying building addresses inside plot with EGRID:**
 
-* ENV: `BUILDING_ADDRESSES_SQL`
+* config: `building_addresses_sql`
 * input: `egrid`
 * output: `strassenname`, `hausnummer`, `plz`, `ortschaft`
 
 Example:
+
 ```sql
 SELECT
     a.strassenname, a.hausnummer, a.plz, a.ortschaft
@@ -162,13 +215,14 @@ WHERE g.egrid = :egrid
 ORDER BY a.strassenname, a.hausnummer;
 ```
 
-SQL for querying SDR infos for Liegenschaft plot (`art == 0`) with EGRID:
+**SQL for querying SDR infos for Liegenschaft plot (`art == 0`) with EGRID:**
 
-* ENV: `SDR_INFOS_LIEGENSCHAFT_SQL`
+* config: `sdr_infos_liegenschaft_sql`
 * input: `egrid`
 * output: `nummer`, `art`, `art_txt`, `area`
 
 Example:
+
 ```sql
 SELECT
     sdr.nummer, sdr.art, sdr.art_txt,
@@ -184,13 +238,14 @@ ORDER BY
     ST_Area(ST_Intersection(sdr.geometrie, g.geometrie)) DESC;
 ```
 
-SQL for querying Liegenschaften infos for SDR plot (`art != 0`) with EGRID:
+**SQL for querying Liegenschaften infos for SDR plot (`art != 0`) with EGRID:**
 
-* ENV: `SDR_INFOS_SDR_SQL`
+* config: `sdr_infos_sdr_sql`
 * input: `egrid`
 * output: `nummer`, `art`, `art_txt`, `area`
 
 Example:
+
 ```sql
 SELECT
     g.nummer, g.art, g.art_txt,
@@ -206,11 +261,10 @@ ORDER BY
     ST_Area(ST_Intersection(sdr.geometrie, g.geometrie)) DESC;
 ```
 
-Optional lookup for custom land cover colors as dict `{"<type>": "<CSS color>"}`:
-
-* ENV: `LCSFC_COLORS`
+An optional lookup for custom land cover colors can be set via `lcsfc_colors` as a dict `{"<type>": "<CSS color>"}`.
 
 Example:
+
 ```json
 {
   "Gebaeude": "#ffc8c8",
@@ -264,113 +318,53 @@ Example:
 }
 ```
 
+Run locally
+-----------
 
-Configuration
--------------
+Install dependencies and run:
 
-Environment variables:
+    export CONFIG_PATH=<CONFIG_PATH>
+    uv run src/server.py
 
-| Variable                  | Description                                             |
-|---------------------------|---------------------------------------------------------|
-| `JWT_SECRET_KEY`          | JWT secret key for token based authentication, shared with QWC Services |
-| `GEODB_URL`               | GeoDB connection for info queries (default: `postgresql:///?service=sogis_services`) |
-| `BASIC_INFO_SQL`          | SQL for basic info query                                |
-| `BASIC_INFO_FIELDS`       | List of custom fields for basic plot info               |
-| `FLURNAMEN_SQL`           | SQL for Flurnamen query                                 |
-| `DETAILED_INFO_SQL`       | SQL for additional plot information query               |
-| `LAND_COVER_FRACTIONS_SQL`| SQL for land cover fractions query                      |
-| `BUILDING_ADDRESSES_SQL`  | SQL for building addresses query                        |
-| `SDR_INFOS_LIEGENSCHAFT_SQL` | SQL for SDR for Liegenschaft query                   |
-| `SDR_INFOS_SDR_SQL`       | SQL for Liegenschaften for SDR query                    |
-| `LCSFC_COLORS`            | Lookup for custom land cover colors (default: see above)|
-| `OEREB_JSON_URL`*         | ÖREB-Webservice URL for generating JSON                 |
-| `OEREB_XML_URL`*          | ÖREB-Webservice URL for generating XML                  |
-| `OEREB_PDF_URL`*          | ÖREB-Webservice URL for generating PDF                  |
-| `GBDBS_SERVICE_URL`*      | GBDBS Service URL for requesting plot owner info XML    |
-| `HIDE_OWNER_ADDRESSES`    | Hide addresses of plot owners (default: `False`)        |
-| `RECAPTCHA_SITE_KEY`      | Public key for Google reCAPTCHA service                 |
-| `RECAPTCHA_SECRET_KEY`    | Secret key for Google reCAPTCHA verification            |
-| `RECAPTCHA_MIN_SCORE`     | Minimum reCAPTCHA score required (default: `0.5`)       |
-| `GBDBS_VERSION`           | GBDBS version (default: `2.1`)                          |
-| `BEZUG_INHALT`            | Value of BezugInhalt in the GBDBS request (default: IndexMitEigentum) |
+To use configs from a `qwc-docker` setup, set `CONFIG_PATH=<...>/qwc-docker/volumes/config`.
 
-* mandatory
+Set `FLASK_DEBUG=1` for additional debug output.
 
-See [Queries](#queries) for setting the query environment variables and their defaults.
-
-Set the `OEREB_JSON_URL` environment variable to the full JSON ÖREB-Webservice URL with a placeholder for the EGRID,
-e.g. 'http://example.com/main/oereb/extract/reduced/json/geometry/{egrid}'.
-
-Set the `OEREB_XML_URL` environment variable to the full XML ÖREB-Webservice URL with a placeholder for the EGRID,
-e.g. 'http://example.com/main/oereb/extract/reduced/xml/geometry/{egrid}'.
-
-Set the `OEREB_PDF_URL` environment variable to the full PDF ÖREB-Webservice URL with a placeholder for the EGRID,
-e.g. 'http://example.com/main/oereb/extract/reduced/pdf/geometry/{egrid}'.
-
-Set the `GBDBS_SERVICE_URL` environment variable to the full GBDBS Service URL,
-e.g. 'http://example.com/gbdbs/gbdbs'.
-
-Set the `HIDE_OWNER_ADDRESSES` environment variable to `True` to hide all addresses of plot owners (default: `False`).
-
-Set the `RECAPTCHA_SITE_KEY` and `RECAPTCHA_SECRET_KEY` environment variables to your Google reCAPTCHA keys.
-Captcha verification for plot owner info is enabled if `RECAPTCHA_SITE_KEY` is set.
-
-Set the `RECAPTCHA_MIN_SCORE` environment variable to the minimum reCAPTCHA score (`0.0` - `1.0`) required for viewing the plot owner info (default: `0.5`).
-
-See [reCAPTCHA documentation](https://developers.google.com/recaptcha/docs/v3). Register keys [here](https://g.co/recaptcha/v3).
-
-
-Usage
------
-
-Start PlotInfo service:
-
-    OEREB_JSON_URL=... OEREB_XML_URL=... OEREB_PDF_URL=... GBDBS_SERVICE_URL=... python src/server.py
+Set `FLASK_RUN_PORT=<port>` to change the default port (default: `5000`).
 
 API documentation:
 
-    http://localhost:5022/api/
+    http://localhost:5000/api/
 
-Basic plot info:
+Examples:
 
-    http://localhost:5022/?x=2607892&y=1228159
+    # Basic plot info
+    http://localhost:5000/?x=2607892&y=1228159
 
-Additional plot info:
+    # Additional plot info
+    http://localhost:5000/plot/CH870679603216
 
-    http://localhost:5022/plot/CH870679603216
+    # ÖREB JSON
+    http://localhost:5000/oereb/json/CH870679603216
 
-ÖREB JSON:
+    # ÖREB XML
+    http://localhost:5000/oereb/xml/CH870679603216
 
-    http://localhost:5022/oereb/json/CH870679603216
+    # ÖREB PDF
+    http://localhost:5000/oereb/pdf/CH870679603216
 
-ÖREB XML:
+    # Plot owner info
+    http://localhost:5000/plot_owner/CH870679603216
 
-    http://localhost:5022/oereb/xml/CH870679603216
+    # Get HTML with embedded captcha for plot owner info request (called from QWC PlotOwnerInfo plugin):
+    http://localhost:5000/plot_owner/captcha/CH870679603216
 
-ÖREB PDF:
+    # Plot owner info with captcha verification (called from QWC PlotOwnerInfo plugin):
+    http://localhost:5000/plot_owner/CH870679603216?token=<captcha_token>
+    
+Docker usage
+------------
 
-    http://localhost:5022/oereb/pdf/CH870679603216
+The Docker image is published on [Dockerhub](https://hub.docker.com/r/sourcepole/sogis-plotinfo-service).
 
-Plot owner info:
-
-    http://localhost:5022/plot_owner/CH870679603216
-
-Get HTML with embedded captcha for plot owner info request (called from QWC2 PlotOwnerInfo):
-
-    http://localhost:5022/plot_owner/captcha/CH870679603216
-
-Plot owner info with captcha verification (called from QWC2 PlotOwnerInfo):
-
-    http://localhost:5022/plot_owner/CH870679603216?token=<captcha_token>
-
-
-Development
------------
-
-Install dependencies and run service:
-
-    uv run src/server.py
-
-With config path:
-
-    CONFIG_PATH=/PATH/TO/CONFIGS/ uv run src/server.py
+See sample [docker-compose.yml](https://github.com/qwc-services/qwc-docker/blob/master/docker-compose-example.yml) of [qwc-docker](https://github.com/qwc-services/qwc-docker).
