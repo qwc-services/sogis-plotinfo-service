@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, jsonify
 from flask_restx import reqparse, Resource
 
@@ -179,4 +181,4 @@ def healthz():
 # local webserver
 if __name__ == '__main__':
     print("Starting PlotInfo service...")
-    app.run(host='localhost', port=5022, debug=True)
+    app.run(host='localhost', port=os.environ.get("FLASK_RUN_PORT", 5000), debug=True)
