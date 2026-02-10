@@ -607,7 +607,7 @@ wheels = [
 
 [[package]]
 name = "sogis-plotinfo-service"
-version = "2026.1.18"
+version = "2026.2.9"
 source = { virtual = "." }
 dependencies = [
     { name = "flask" },
