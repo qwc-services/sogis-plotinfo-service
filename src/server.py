@@ -154,6 +154,17 @@ class PlotOwner(Resource):
         args = plot_owner_parser.parse_args()
         return plot_owner.info(get_identity(), egrid, args['token'])
 
+    @api.param('token', 'reCAPTCHA response token', _in='formData')
+    @api.expect(plot_owner_parser)
+    @optional_auth
+    def post(self, egrid):
+        """Plot owner
+
+        Return additional plot owner information for EGRID.
+        """
+        args = plot_owner_parser.parse_args()
+        return plot_owner.info(get_identity(), egrid, args['token'])
+
 
 @api.route('/landreg/<egrid>')
 @api.param('egrid', 'EGRID')
