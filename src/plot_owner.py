@@ -361,9 +361,10 @@ class PlotOwner:
                     self.node_value(person_info, 'Vorname')
                 }
 
-                adresse = self.find(
-                    person_info, '//Adresse/Adresse') or self.find(
-                    person_info, '//Adresse')
+                adresse = (
+                    self.find(node, '//Adresse/Adresse') or
+                    self.find(node, '//Adresse')
+                )
                 if not self.hide_owner_addresses and adresse:
                     person.update({
                         'strasse': self.node_value(adresse, 'Strasse'),
